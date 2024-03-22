@@ -32,7 +32,7 @@ export const handler: APIGatewayProxyHandlerV2 = async (event) => {
         ExpressionAttributeValues: {
           ":awardBody": awardBody,
           ":movieId": movieId,
-          ":numAwards":numAwards,
+          ":numAwards":parseInt(numAwards),
           
 
         },
