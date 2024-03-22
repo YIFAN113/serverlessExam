@@ -7,27 +7,34 @@ const ddbDocClient = createDDbDocClient();
 export const handler: APIGatewayProxyHandlerV2 = async (event) => {
   try {
     const awardBody = event.pathParameters?.awardBody;
-    const movieId = event.pathParameters?.movieId
+    const min = event.queryStringParameters?.numAwards;
+    const movieId = event.pathParameters?.movieId  
       ? parseInt(event.pathParameters.movieId)
       : undefined;
 
-    if (!awardBody || !movieId) {
+    if (!awardBody || !movieId || !min) {
       return {
         statusCode: 400,
         body: JSON.stringify({ message: "missing movieid or awards" }),
       };
     }
 
+
     const queryCommandOutput = await ddbDocClient.send(
       new QueryCommand({
-        TableName: process.env.AWARDS_TABLE_NAME,
+        TableName: process.env.TABLE_NAME,
         KeyConditionExpression: "#awardBody = :awardBody AND movieId = :movieId",
+
         ExpressionAttributeNames: {
+            
           "#awardBody": "awardBody",
         },
         ExpressionAttributeValues: {
           ":awardBody": awardBody,
           ":movieId": movieId,
+          ":min":min,
+        //    ...(min ? { ":minRating": parseInt(num) } : {}),
+
         },
       })
     );
